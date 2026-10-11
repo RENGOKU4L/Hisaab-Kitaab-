@@ -26,12 +26,22 @@ jobs:
 
       - name: Verify project files
         run: |
-          echo "Checking Gradle configuration..."
+          echo "Repository root:"
+          pwd
           ls -la
+
+          echo "Checking required files:"
+          for f in settings.gradle build.gradle app/build.gradle app/src/main/AndroidManifest.xml app/src/main/java/com/example/splitbill3/MainActivity.java; do
+            if [ -f "$f" ]; then
+              echo "FOUND: $f"
+            else
+              echo "MISSING: $f"
+            fi
+          done
+
           test -f settings.gradle
           test -f build.gradle
           test -f app/build.gradle
-          echo "Checking Android source files..."
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/example/splitbill3/MainActivity.java
 
@@ -42,6 +52,9 @@ jobs:
 
       - name: Show Gradle projects
         run: gradle --no-daemon projects
+
+      - name: Show available app tasks
+        run: gradle --no-daemon :app:tasks --all
 
       - name: Build debug APK
         run: gradle --no-daemon --stacktrace :app:assembleDebug
